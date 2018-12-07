@@ -1,0 +1,16 @@
+{
+  "plugins": [
+    [
+      "@babel/plugin-proposal-object-rest-spread",
+      {},
+      "@babel/plugin-proposal-object-rest-spread-plugin-name"
+    ]
+  ],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {},
+      "@babel/preset-env-plugin-name"
+    ]
+  ]
+}

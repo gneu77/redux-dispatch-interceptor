@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for dispatchInterceptor.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="prettify.css" />
+    <link rel="stylesheet" href="base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="index.html">All files</a> dispatchInterceptor.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">51.06% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>24/47</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">12.12% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>4/33</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">62.5% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>5/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">48.89% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>22/45</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line medium'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const typeToInterceptor = new Map();
+&nbsp;
+const addInterceptor = <span class="fstat-no" title="function not covered" >(i</span>nterceptType, interceptor) =&gt; {
+<span class="cstat-no" title="statement not covered" >  if (typeof interceptType !== "string") {</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error("interceptType must be a string");</span>
+  }
+<span class="cstat-no" title="statement not covered" >  if (typeToInterceptor.has(interceptType)) {</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error("A dispatch interceptor of type '" + interceptType + "' is already registered");</span>
+  }
+<span class="cstat-no" title="statement not covered" >  if (typeof interceptor !== "function") {</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error("interceptor of type '" + interceptType + "' must be a synchronous callback, but got '" + typeof interceptor + "'");</span>
+  }
+<span class="cstat-no" title="statement not covered" >  typeToInterceptor.set(interceptType, interceptor);</span>
+<span class="cstat-no" title="statement not covered" >  return {</span>
+    removeInterceptor: <span class="fstat-no" title="function not covered" >()</span> =&gt; {
+<span class="cstat-no" title="statement not covered" >      typeToInterceptor.delete(interceptType);</span>
+    },
+  }
+};
+&nbsp;
+const getInterceptEnhancer = () =&gt; next =&gt; (...args) =&gt; {
+  const store = next(...args); // eslint-disable-line callback-return
+  const getState = store.getState;
+  const reduxDispatch = store.dispatch;
+&nbsp;
+  let enhancedDispatch = null;
+&nbsp;
+  const handleDispatch = (action, noIntercept, noInterceptTypes, onDispatchHandledCallback, ...restArgs) =&gt; {
+    const dispatchTimestamp = Date.now();
+    const skipTypes = new Set(noInterceptTypes);
+    let blockedBy = null;
+    typeToInterceptor.forEach(<span class="fstat-no" title="function not covered" >(i</span>nterceptor, interceptType) =&gt; {
+<span class="cstat-no" title="statement not covered" >      if (blockedBy === null) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!noIntercept || !(noInterceptTypes !== null &amp;&amp; !skipTypes.has(interceptType))) {</span>
+          let interceptResult = <span class="cstat-no" title="statement not covered" >null;</span>
+<span class="cstat-no" title="statement not covered" >          interceptResult = interceptor({</span>
+            action,
+            dispatch: enhancedDispatch,
+            getState,
+            dispatchTimestamp,
+          });
+<span class="cstat-no" title="statement not covered" >          if (typeof interceptResult !== "boolean") {</span>
+            // We cannot allow for async interceptors, because redux users
+            // expect the dispatch function to work synchronously.
+<span class="cstat-no" title="statement not covered" >            throw new Error("interceptor of type'" + interceptType + "' returned no boolean");</span>
+          }
+<span class="cstat-no" title="statement not covered" >          if (interceptResult === false) {</span>
+<span class="cstat-no" title="statement not covered" >            blockedBy = interceptType;</span>
+          }
+        }
+      }
+    });
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (blockedBy === null) {
+      if (typeof action === "function") {
+        // If a thunk has passed the interceptors, then we let it pass completely.
+        // Thus, we are calling it with the original redux dispatch and thus, there
+        // will be no intercept for the actions invoked from the thunk.
+        // In a future version we might make this configurable via dispatch argument
+        action(reduxDispatch, ...restArgs);
+        //reduxDispatch((dispatch, ...dispatchArgs) =&gt; {
+        //  action(reduxDispatch, ...dispatchArgs);
+        //}, ...restArgs);
+      }
+      else {
+        reduxDispatch(action, ...restArgs);
+      }
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof onDispatchHandledCallback === "function") {
+<span class="cstat-no" title="statement not covered" >        onDispatchHandledCallback({</span>
+          blocked: false,
+          blockedBy,
+        })
+      }
+&nbsp;
+      // It's not possible to give another dispatch to promise middleware -&gt; thus dispatch interceptor is not
+      // compatible with redux-promise-middleware. We could make it work, by wrapping the promises in the payload,
+      // but there could also be payloads with a promise without promise middleware being used.
+    }
+    else <span class="cstat-no" title="statement not covered" >if (typeof onDispatchHandledCallback === "function") {</span>
+<span class="cstat-no" title="statement not covered" >      onDispatchHandledCallback({</span>
+        blocked: true,
+        blockedBy,
+      })
+    }
+  };
+&nbsp;
+  enhancedDispatch = (action, ...dispatchArgs) =&gt; {
+    let dispatchArg = {
+      noIntercept: false,
+      noInterceptTypes: null,
+      onDispatchHandledCallback: null,
+    };
+    for (let i = 0; i &lt; dispatchArgs.length; ++i) {
+<span class="cstat-no" title="statement not covered" >      if (typeof dispatchArgs[i] === "object" &amp;&amp; (</span>
+            typeof dispatchArgs[i].noIntercept === "boolean" ||
+            typeof dispatchArgs[i].noInterceptTypes === "string" ||
+            Array.isArray(dispatchArgs[i].noInterceptTypes) ||
+            typeof dispatchArgs[i].onDispatchHandledCallback === "function"
+          )) {
+<span class="cstat-no" title="statement not covered" >        dispatchArg = dispatchArgs[i];</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      }
+    }
+    handleDispatch(action, dispatchArg.noIntercept, dispatchArg.noInterceptTypes, dispatchArg.onDispatchHandledCallback, ...dispatchArgs);
+  };
+&nbsp;
+  return {
+    ...store,
+    dispatch: enhancedDispatch,
+  };
+};
+&nbsp;
+export {
+  getInterceptEnhancer,
+  addInterceptor,
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Dec 07 2018 21:49:32 GMT+0100 (Central European Standard Time)
+</div>
+</div>
+<script src="prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="sorter.js"></script>
+</body>
+</html>

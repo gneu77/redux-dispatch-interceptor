@@ -1,0 +1,48 @@
+{
+  "name": "@swarmy/redux-dispatch-interceptor",
+  "version": "1.0.0",
+  "description": "Redux enhancer to add dispatch interceptors",
+  "author": "Gerd Neudert",
+  "license": "MIT",
+  "keywords": [
+    "redux",
+    "dispatch",
+    "enhancer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gneu77/redux-dispatch-interceptor"
+  },
+  "main": "build/redux-dispatch-interceptor.js",
+  "scripts": {
+    "lint": "eslint \"src/**\" -o lint-report.html -f html",
+    "test": "jest --runInBand --config jest.config.functional.js",
+    "remove-absolute-pathes-from-reports": "sed -i 's,'\"`pwd`\"',.,g' test-report.html",
+    "build": "webpack --config webpack.prod.js",
+    "generate-doc": "./node_modules/.bin/jsdoc -a all -d docs ./src/dispatchInterceptor.js",
+    "prep-publish": "rm -rf build && rm -rf docs && rm -rf coverage && npm run build && npm run test && npm run remove-absolute-pathes-from-reports && npm run generate-doc && echo \"!!!DO NOT FORGET TO UPDATE commit in README afterwards!!!\""
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "babel-bridge": "^1.12.11",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
+    "jest": "^23.6.0",
+    "jest-html-reporter": "^2.4.2",
+    "jsdoc": "^3.5.5",
+    "redux": "^4.0.1",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2"
+  }
+}

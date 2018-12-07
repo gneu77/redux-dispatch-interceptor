@@ -1,0 +1,7 @@
+/.git
+/.github
+/.idea
+/coverage
+/docs
+lint-report.html
+test-report.html
