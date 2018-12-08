@@ -19,8 +19,7 @@
     "test": "jest --runInBand --config jest.config.functional.js",
     "remove-absolute-pathes-from-reports": "sed -i 's,'\"`pwd`\"',.,g' test-report.html",
     "build": "webpack --config webpack.prod.js",
-    "generate-doc": "./node_modules/.bin/jsdoc -a all -d docs ./src/dispatchInterceptor.js",
-    "prep-publish": "rm -rf build && rm -rf docs && rm -rf coverage && npm run build && npm run test && npm run remove-absolute-pathes-from-reports && npm run generate-doc && echo \"!!!DO NOT FORGET TO UPDATE commit in README afterwards!!!\""
+    "prep-publish": "rm -rf build && rm -rf coverage && npm run build && npm run test && npm run remove-absolute-pathes-from-reports && echo \"!!!DO NOT FORGET TO UPDATE commit in README afterwards!!!\""
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",

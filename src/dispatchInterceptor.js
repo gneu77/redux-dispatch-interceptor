@@ -27,18 +27,18 @@ const getInterceptEnhancer = () => next => (...args) => {
 
   const handleDispatch = (action, noIntercept, noInterceptTypes, onDispatchHandledCallback, ...restArgs) => {
     const dispatchTimestamp = Date.now();
-    const skipTypes = new Set(noInterceptTypes);
+    const skipTypes = typeof noInterceptTypes === "string" ? new Set([noInterceptTypes]) : new Set(noInterceptTypes);
     let blockedBy = null;
     typeToInterceptor.forEach((interceptor, interceptType) => {
       if (blockedBy === null) {
-        if (!noIntercept || !(noInterceptTypes !== null && !skipTypes.has(interceptType))) {
+        if (!noIntercept && !skipTypes.has(interceptType)) {
           let interceptResult = null;
           interceptResult = interceptor({
             action,
             dispatch: enhancedDispatch,
             getState,
             dispatchTimestamp,
-          });
+          }, ...restArgs);
           if (typeof interceptResult !== "boolean") {
             // We cannot allow for async interceptors, because redux users
             // expect the dispatch function to work synchronously.
