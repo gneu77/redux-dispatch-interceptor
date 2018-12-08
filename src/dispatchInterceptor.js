@@ -1,8 +1,8 @@
 const typeToInterceptor = new Map();
 
 const addInterceptor = (interceptType, interceptor) => {
-  if (typeof interceptType !== "string") {
-    throw new Error("interceptType must be a string");
+  if (typeof interceptType !== "string" || interceptType === "") {
+    throw new Error("interceptType must be a non-empty string");
   }
   if (typeToInterceptor.has(interceptType)) {
     throw new Error("A dispatch interceptor of type '" + interceptType + "' is already registered");

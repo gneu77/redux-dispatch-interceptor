@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-number */
 
 import {combineReducers, createStore} from "redux";
-import {getInterceptEnhancer} from "../dispatchInterceptor";
+import {getInterceptEnhancer, addInterceptor} from "../dispatchInterceptor";
 
 const RESET_STATE = 0;
 
@@ -55,7 +55,7 @@ beforeAll(() => {
 });
 
 
-describe("dispatch", () => {
+describe("enhanced dispatch", () => {
 
   it("has standard redux behavior", () => {
     let countA = null;
@@ -128,6 +128,84 @@ describe("dispatch", () => {
     reduxStore.dispatch({type: TYPE_RESET});
     expect(countA).toEqual(0);
     expect(countB).toEqual(0);
+  });
+
+  it("throws error when trying to register interceptor without type", () => {
+    expect(() => {
+      addInterceptor("", () => true);
+    }).toThrow("interceptType must be a non-empty string");
+  });
+
+  it("throws error when trying to register two interceptors of the same type", () => {
+    const interceptorHandle = addInterceptor("INTERCEPTOR_A", () => true);
+    expect(() => {
+      addInterceptor("INTERCEPTOR_A", () => true);
+    }).toThrow("A dispatch interceptor of type 'INTERCEPTOR_A' is already registered");
+    interceptorHandle.removeInterceptor();
+  });
+
+  it("throws error when interceptor is no function", () => {
+    expect(() => {
+      addInterceptor("INTERCEPTOR_A", {});
+    }).toThrow("interceptor of type 'INTERCEPTOR_A' must be a synchronous callback, but got 'object'");
+  });
+
+  it("calls registered interceptors with action, getState and dipatch timestamp", () => {
+    let interceptAction = null;
+    let lastTimestamp = 1;
+    let currentTimestamp = lastTimestamp;
+    let interceptCountA = null;
+    let interceptCountB = null;
+    const interceptorHandle = addInterceptor("INTERCEPTOR_A", ({
+      action,
+      getState,
+      dispatchTimestamp,
+    }) => {
+      interceptAction = action;
+      lastTimestamp = currentTimestamp;
+      currentTimestamp = dispatchTimestamp;
+      interceptCountA = getState().reducerA.count;
+      interceptCountB = getState().reducerB.count;
+      return true;
+    });
+
+    let countA = null;
+    let countB = null;
+    onReduxStateChange = getState => {
+      countA = getState().reducerA.count;
+      countB = getState().reducerB.count;
+    };
+
+    reduxStore.dispatch({type: TYPE_INCREASE_A});
+    expect(countA).toEqual(1);
+    expect(countB).toEqual(0);
+    expect(interceptAction.type).toEqual(TYPE_INCREASE_A);
+    expect(lastTimestamp < currentTimestamp).toBeTruthy();
+    expect(interceptCountA).toEqual(0);
+    expect(interceptCountB).toEqual(0);
+
+    interceptorHandle.removeInterceptor();
+    reduxStore.dispatch({type: TYPE_RESET});
+    expect(countA).toEqual(0);
+    expect(countB).toEqual(0);
+  });
+
+  it("blocks dispatch in case any interceptor returns false", () => {
+    const interceptorHandle = addInterceptor("INTERCEPTOR_A", () => false);
+
+    let countA = null;
+    let countB = null;
+    onReduxStateChange = getState => {
+      countA = getState().reducerA.count;
+      countB = getState().reducerB.count;
+    };
+
+    reduxStore.dispatch({type: TYPE_INCREASE_A});
+    reduxStore.dispatch({type: TYPE_INCREASE_B});
+    expect(countA).toEqual(null);
+    expect(countB).toEqual(null);
+
+    interceptorHandle.removeInterceptor();
   });
 
 });
