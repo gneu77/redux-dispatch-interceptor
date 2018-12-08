@@ -56,9 +56,9 @@ const getInterceptEnhancer = () => next => (...args) => {
         // Thus, we are calling it with the original redux dispatch and thus, there
         // will be no intercept for the actions invoked from the thunk.
         // In a future version we might make this configurable via dispatch argument
-        action(reduxDispatch, ...restArgs);
+        action(reduxDispatch, getState, ...restArgs);
         //reduxDispatch((dispatch, ...dispatchArgs) => {
-        //  action(reduxDispatch, ...dispatchArgs);
+        //  action(reduxDispatch, getState, ...dispatchArgs);
         //}, ...restArgs);
       }
       else {
