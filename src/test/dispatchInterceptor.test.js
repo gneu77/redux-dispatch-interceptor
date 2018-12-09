@@ -115,7 +115,7 @@ describe("enhanced dispatch", () => {
     });
     expect(countA).toEqual(1);
     expect(countB).toEqual(1);
-    expect(typeof countC).toEqual("undefined");
+    expect(countC.isFromThunk).toBeTruthy();
 
     reduxStore.dispatch((dispatch, getState, extraArgument) => {
       dispatch({type: TYPE_INCREASE_B});

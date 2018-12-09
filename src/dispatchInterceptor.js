@@ -1,6 +1,6 @@
 const typeToInterceptor = new Map();
 
-const addInterceptor = (interceptType, interceptor) => {
+const addInterceptor = (interceptType, interceptor, interceptInThunks = false) => {
   if (typeof interceptType !== "string" || interceptType === "") {
     throw new Error("interceptType must be a non-empty string");
   }
@@ -10,7 +10,7 @@ const addInterceptor = (interceptType, interceptor) => {
   if (typeof interceptor !== "function") {
     throw new Error("interceptor of type '" + interceptType + "' must be a synchronous callback, but got '" + typeof interceptor + "'");
   }
-  typeToInterceptor.set(interceptType, interceptor);
+  typeToInterceptor.set(interceptType, {interceptor, interceptInThunks});
   return {
     removeInterceptor: () => {
       typeToInterceptor.delete(interceptType);
@@ -25,41 +25,47 @@ const getInterceptEnhancer = () => next => (...args) => {
 
   let enhancedDispatch = null;
 
-  const handleDispatch = (action, noIntercept, noInterceptTypes, onDispatchHandledCallback, ...restArgs) => {
+  const handleDispatch = (action, {noIntercept, noInterceptTypes, onDispatchHandledCallback, isFromThunk}, dispatchArgIndex, ...restArgs) => {
     const dispatchTimestamp = Date.now();
     const skipTypes = typeof noInterceptTypes === "string" ? new Set([noInterceptTypes]) : new Set(noInterceptTypes);
     let blockedBy = null;
-    typeToInterceptor.forEach((interceptor, interceptType) => {
+    typeToInterceptor.forEach(({interceptor, interceptInThunks}, interceptType) => {
       if (blockedBy === null) {
-        if (!noIntercept && !skipTypes.has(interceptType)) {
-          let interceptResult = null;
-          interceptResult = interceptor({
-            action,
-            dispatch: enhancedDispatch,
-            getState,
-            dispatchTimestamp,
-          }, ...restArgs);
-          if (typeof interceptResult !== "boolean") {
-            // We cannot allow for async interceptors, because redux users
-            // expect the dispatch function to work synchronously.
-            throw new Error("interceptor of type'" + interceptType + "' returned no boolean");
-          }
-          if (interceptResult === false) {
-            blockedBy = interceptType;
+        if (!isFromThunk || interceptInThunks) {
+          if (!noIntercept && !skipTypes.has(interceptType)) {
+            let interceptResult = null;
+            interceptResult = interceptor({
+              action,
+              dispatch: enhancedDispatch,
+              getState,
+              dispatchTimestamp,
+            }, ...restArgs);
+            if (typeof interceptResult !== "boolean") {
+              // We cannot allow for async interceptors, because redux users
+              // expect the dispatch function to work synchronously.
+              throw new Error("interceptor of type'" + interceptType + "' returned no boolean");
+            }
+            if (interceptResult === false) {
+              blockedBy = interceptType;
+            }
           }
         }
       }
     });
     if (blockedBy === null) {
       if (typeof action === "function") {
-        // If a thunk has passed the interceptors, then we let it pass completely.
-        // Thus, we are calling it with the original redux dispatch and thus, there
-        // will be no intercept for the actions invoked from the thunk.
-        // In a future version we might make this configurable via dispatch argument
-        action(reduxDispatch, getState, ...restArgs);
-        //reduxDispatch((dispatch, ...dispatchArgs) => {
-        //  action(reduxDispatch, getState, ...dispatchArgs);
-        //}, ...restArgs);
+        if (dispatchArgIndex === null) {
+          action(enhancedDispatch, getState, ...restArgs, {
+            noIntercept,
+            noInterceptTypes,
+            onDispatchHandledCallback,
+            isFromThunk: true,
+          });
+        }
+        else {
+          restArgs[dispatchArgIndex].isFromThunk = true; // eslint-disable-line no-param-reassign
+          action(enhancedDispatch, getState, ...restArgs);
+        }
       }
       else {
         reduxDispatch(action, ...restArgs);
@@ -88,19 +94,22 @@ const getInterceptEnhancer = () => next => (...args) => {
       noIntercept: false,
       noInterceptTypes: null,
       onDispatchHandledCallback: null,
+      isFromThunk: false,
     };
+    let dispatchArgIndex = null;
     for (let i = 0; i < dispatchArgs.length; ++i) {
       if (typeof dispatchArgs[i] === "object" && (
             typeof dispatchArgs[i].noIntercept === "boolean" ||
             typeof dispatchArgs[i].noInterceptTypes === "string" ||
             Array.isArray(dispatchArgs[i].noInterceptTypes) ||
-            typeof dispatchArgs[i].onDispatchHandledCallback === "function"
+            typeof dispatchArgs[i].onDispatchHandledCallback === "function" ||
+            typeof dispatchArgs[i].isFromThunk === "boolean"
           )) {
         dispatchArg = dispatchArgs[i];
         break;
       }
     }
-    handleDispatch(action, dispatchArg.noIntercept, dispatchArg.noInterceptTypes, dispatchArg.onDispatchHandledCallback, ...dispatchArgs);
+    handleDispatch(action, dispatchArg, dispatchArgIndex, ...dispatchArgs);
   };
 
   return {
