@@ -98,7 +98,6 @@ describe("enhanced dispatch", () => {
     expect(countB).toEqual(0);
   });
 
-
   it("handles redux thunks with extra dispatch arguments", () => {
     let countA = null;
     let countB = null;
@@ -115,7 +114,7 @@ describe("enhanced dispatch", () => {
     });
     expect(countA).toEqual(1);
     expect(countB).toEqual(1);
-    expect(countC.isFromThunk).toBeTruthy();
+    expect(typeof countC).toEqual("undefined");
 
     reduxStore.dispatch((dispatch, getState, extraArgument) => {
       dispatch({type: TYPE_INCREASE_B});
@@ -371,6 +370,154 @@ describe("enhanced dispatch", () => {
     reduxStore.dispatch({type: TYPE_INCREASE_A});
     expect(countA).toEqual(0);
     expect(countB).toEqual(1);
+
+    interceptorHandleA.removeInterceptor();
+    reduxStore.dispatch({type: TYPE_RESET});
+    expect(countA).toEqual(0);
+    expect(countB).toEqual(0);
+  });
+
+  it("by default does not intercept actions from thunks", () => {
+    let interceptCount = 0;
+    const interceptorHandleA = addInterceptor("INTERCEPTOR_A", () => {
+      interceptCount += 1;
+      return true;
+    });
+
+    let countA = null;
+    let countB = null;
+    onReduxStateChange = getState => {
+      countA = getState().reducerA.count;
+      countB = getState().reducerB.count;
+    };
+
+    reduxStore.dispatch(dispatch => {
+      dispatch({type: TYPE_INCREASE_A});
+      dispatch({type: TYPE_INCREASE_B});
+    });
+    expect(countA).toEqual(1);
+    expect(countB).toEqual(1);
+    expect(interceptCount).toEqual(1);
+
+    interceptorHandleA.removeInterceptor();
+    reduxStore.dispatch({type: TYPE_RESET});
+    expect(countA).toEqual(0);
+    expect(countB).toEqual(0);
+  });
+
+  it("allows for interceptors that intercept in thunks", () => {
+    let interceptCount = 0;
+    const interceptorHandleA = addInterceptor("INTERCEPTOR_A", () => {
+      interceptCount += 1;
+      return true;
+    }, true);
+
+    let countA = null;
+    let countB = null;
+    onReduxStateChange = getState => {
+      countA = getState().reducerA.count;
+      countB = getState().reducerB.count;
+    };
+
+    reduxStore.dispatch(dispatch => {
+      dispatch({type: TYPE_INCREASE_A});
+      dispatch({type: TYPE_INCREASE_B});
+    });
+    expect(countA).toEqual(1);
+    expect(countB).toEqual(1);
+    expect(interceptCount).toEqual(3);
+
+    interceptorHandleA.removeInterceptor();
+    reduxStore.dispatch({type: TYPE_RESET});
+    expect(countA).toEqual(0);
+    expect(countB).toEqual(0);
+  });
+
+  it("by default passes intercept dispatch args to thunk dispatches", () => {
+    let interceptCount = 0;
+    const interceptorHandleA = addInterceptor("INTERCEPTOR_A", () => {
+      interceptCount += 1;
+      return false;
+    }, true);
+
+    let countA = null;
+    let countB = null;
+    onReduxStateChange = getState => {
+      countA = getState().reducerA.count;
+      countB = getState().reducerB.count;
+    };
+
+    reduxStore.dispatch(dispatch => {
+      dispatch({type: TYPE_INCREASE_A});
+      dispatch({type: TYPE_INCREASE_B});
+    }, {noIntercept: true});
+    expect(countA).toEqual(1);
+    expect(countB).toEqual(1);
+    expect(interceptCount).toEqual(0);
+
+    interceptorHandleA.removeInterceptor();
+    reduxStore.dispatch({type: TYPE_RESET});
+    expect(countA).toEqual(0);
+    expect(countB).toEqual(0);
+  });
+
+  it("can also dispatch without passing dispatch args to thunk", () => {
+    let interceptCount = 0;
+    const interceptorHandleA = addInterceptor("INTERCEPTOR_A", () => {
+      interceptCount += 1;
+      return false;
+    }, true);
+
+    let countA = null;
+    let countB = null;
+    onReduxStateChange = getState => {
+      countA = getState().reducerA.count;
+      countB = getState().reducerB.count;
+    };
+
+    reduxStore.dispatch(dispatch => {
+      dispatch({type: TYPE_INCREASE_A});
+      dispatch({type: TYPE_INCREASE_B});
+    }, {noIntercept: true, doNotUseInThunk: true});
+    expect(countA).toEqual(null);
+    expect(countB).toEqual(null);
+    expect(interceptCount).toEqual(2);
+
+    interceptorHandleA.removeInterceptor();
+    reduxStore.dispatch({type: TYPE_RESET});
+    expect(countA).toEqual(0);
+    expect(countB).toEqual(0);
+  });
+
+  it("correctly passes additional dispatch arguments with actions from thunks, also if interceptArgs are not passed", () => {
+    let interceptCount = 0;
+    const interceptorHandleA = addInterceptor("INTERCEPTOR_A", () => {
+      interceptCount += 1;
+      return true;
+    }, true);
+
+    let countA = null;
+    let countB = null;
+    onReduxStateChange = getState => {
+      countA = getState().reducerA.count;
+      countB = getState().reducerB.count;
+    };
+
+    let countC = null;
+    let countD = null;
+    reduxStore.dispatch(dispatch => {
+      dispatch((innerDispatch, getState, extraArg1, extraArg2) => {
+        dispatch({type: TYPE_INCREASE_A});
+        dispatch({type: TYPE_INCREASE_B});
+        countC = extraArg1;
+        countD = extraArg2;
+      }, 8, 9);
+    }, {doNotUseInThunk: true});
+    expect(countA).toEqual(1);
+    expect(countB).toEqual(1);
+    expect(interceptCount).toEqual(4);
+    expect(countC).toEqual(8);
+    expect(countD).toEqual(9);
 
     interceptorHandleA.removeInterceptor();
     reduxStore.dispatch({type: TYPE_RESET});

@@ -25,7 +25,13 @@ const getInterceptEnhancer = () => next => (...args) => {
 
   let enhancedDispatch = null;
 
-  const handleDispatch = (action, {noIntercept, noInterceptTypes, onDispatchHandledCallback, isFromThunk}, dispatchArgIndex, ...restArgs) => {
+  const handleDispatch = (action, interceptorDispatchArg, ...restArgs) => {
+    const {
+      noIntercept,
+      noInterceptTypes,
+      onDispatchHandledCallback,
+      isFromThunk,
+    } = interceptorDispatchArg;
     const dispatchTimestamp = Date.now();
     const skipTypes = typeof noInterceptTypes === "string" ? new Set([noInterceptTypes]) : new Set(noInterceptTypes);
     let blockedBy = null;
@@ -54,18 +60,21 @@ const getInterceptEnhancer = () => next => (...args) => {
     });
     if (blockedBy === null) {
       if (typeof action === "function") {
-        if (dispatchArgIndex === null) {
-          action(enhancedDispatch, getState, ...restArgs, {
-            noIntercept,
-            noInterceptTypes,
-            onDispatchHandledCallback,
+        // We must wrap the dispatch given to the thunk, to ensure that we not only pass over the
+        // interceptor arg the thunk was called with, but also setting isFromThunk to true
+        let newInterceptorDispatchArg = {...interceptorDispatchArg, isFromThunk: true};
+        if (interceptorDispatchArg.doNotUseInThunk) {
+          newInterceptorDispatchArg = {
+            noIntercept: false,
+            noInterceptTypes: null,
+            onDispatchHandledCallback: null,
             isFromThunk: true,
-          });
+            doNotUseInThunk: true,
+          };
         }
-        else {
-          restArgs[dispatchArgIndex].isFromThunk = true; // eslint-disable-line no-param-reassign
-          action(enhancedDispatch, getState, ...restArgs);
-        }
+        action((innerAction, ...dispatchArgs) => {
+          enhancedDispatch(innerAction, newInterceptorDispatchArg, ...dispatchArgs);
+        }, getState, ...restArgs);
       }
       else {
         reduxDispatch(action, ...restArgs);
@@ -74,6 +83,7 @@ const getInterceptEnhancer = () => next => (...args) => {
         onDispatchHandledCallback({
           blocked: false,
           blockedBy,
+          isFromThunk,
         })
       }
 
@@ -85,31 +95,36 @@ const getInterceptEnhancer = () => next => (...args) => {
       onDispatchHandledCallback({
         blocked: true,
         blockedBy,
+        isFromThunk,
       })
     }
   };
 
   enhancedDispatch = (action, ...dispatchArgs) => {
-    let dispatchArg = {
+    let interceptorDispatchArg = {
       noIntercept: false,
       noInterceptTypes: null,
       onDispatchHandledCallback: null,
       isFromThunk: false,
+      doNotUseInThunk: false,
     };
-    let dispatchArgIndex = null;
+    const newDispatchArgs = [];
     for (let i = 0; i < dispatchArgs.length; ++i) {
       if (typeof dispatchArgs[i] === "object" && (
             typeof dispatchArgs[i].noIntercept === "boolean" ||
             typeof dispatchArgs[i].noInterceptTypes === "string" ||
             Array.isArray(dispatchArgs[i].noInterceptTypes) ||
             typeof dispatchArgs[i].onDispatchHandledCallback === "function" ||
-            typeof dispatchArgs[i].isFromThunk === "boolean"
+            typeof dispatchArgs[i].isFromThunk === "boolean" ||
+            typeof dispatchArgs[i].doNotUseInThunk === "boolean"
           )) {
-        dispatchArg = dispatchArgs[i];
-        break;
+        interceptorDispatchArg = {...interceptorDispatchArg, ...dispatchArgs[i]};
+      }
+      else {
+        newDispatchArgs.push(dispatchArgs[i]);
       }
     }
-    handleDispatch(action, dispatchArg, dispatchArgIndex, ...dispatchArgs);
+    handleDispatch(action, interceptorDispatchArg, ...newDispatchArgs);
   };
 
   return {
