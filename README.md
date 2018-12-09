@@ -144,8 +144,8 @@ dispatch({type: "SAVE_CHANGES", payload: data}, {noInterceptTypes: "confirmation
 That's it. If you would do this with thunks instead, you would have to warp all of your actions into thunks.
 
 ## Quality <a name="section-quality"></a>
-* [Test results](https://rawcdn.githack.com/gneu77/redux-dispatch-interceptor//test-report.html)
-* [Test coverage](https://rawcdn.githack.com/gneu77/redux-dispatch-interceptor//coverage/index.html)
+* [Test results](https://rawcdn.githack.com/gneu77/redux-dispatch-interceptor/408ee25424b9aec960ea890a914297054892a5f8/test-report.html)
+* [Test coverage](https://rawcdn.githack.com/gneu77/redux-dispatch-interceptor/408ee25424b9aec960ea890a914297054892a5f8/coverage/index.html)
 
 ## Questions <a name="section-questions"></a>
 
