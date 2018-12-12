@@ -1,6 +1,6 @@
 {
   "name": "@swarmy/redux-dispatch-interceptor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Redux enhancer to add dispatch interceptors",
   "author": "Gerd Neudert",
   "license": "MIT",
@@ -8,7 +8,8 @@
     "redux",
     "dispatch",
     "enhancer",
-    "interceptor"
+    "interceptor",
+    "dynamic-middleware"
   ],
   "repository": {
     "type": "git",

@@ -141,7 +141,7 @@ const handle.removeInterceptor();
 dispatch({type: "SAVE_CHANGES", payload: data}, {noInterceptTypes: "confirmationInterceptor"});
 ```
 
-That's it. If you would do this with thunks instead, you would have to warp all of your actions into thunks.
+That's it. If you would do this with thunks instead, you would have to wrap all of your actions into thunks.
 
 ## Quality <a name="section-quality"></a>
 * [Test results](https://rawcdn.githack.com/gneu77/redux-dispatch-interceptor/408ee25424b9aec960ea890a914297054892a5f8/test-report.html)
@@ -160,3 +160,8 @@ Of course, by dispatching a thunk from an interceptor and blocking the original 
 Yes you can!
 And I'd say in 90% of the use cases, that's the better way, because it's the standard way.
 To get an idea in which cases an interceptor might be more handy, have a look at the example in the [Use Case Example](#section-use-case)
+
+* Essentially, when you have to to something (e.g. check conditions) for a distinct action, you would wrap it into a thunk.
+* If you want to do something always and for all your actions, you implement a middleware for it.
+* But if you don't want to implement middleware, or you need dynamic middleware, then this package is for you.
+git 
